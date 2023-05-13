@@ -1,13 +1,14 @@
 import pydub
 import numpy as np
 from scipy.fft import *
-import soundfile as sf
 from matplotlib import pyplot as plt
-from scipy.signal import periodogram
+from scipy.signal import periodogram, butter, sosfilt
 import math 
+from sys import argv
+
 N = 256
 
-a = pydub.AudioSegment.from_mp3("data/mono.mp3")
+a = pydub.AudioSegment.from_mp3(argv[1])
 y = np.array(a.get_array_of_samples())
 if a.channels == 2:
     y = y.reshape((-1, 2))
@@ -16,10 +17,11 @@ print(y.shape)
 zeroorone = []
 sums = []
 max_ampls = []
+band_stop = butter(5, [300,3000], 'bandstop', fs=a.frame_rate, output='sos', analog = False)
 for i in range(4*43*60):
     
     dataToRead = y[int(i * a.frame_rate/4 ) : int((i + 1) * a.frame_rate/4)]
-
+    dataToRead = sosfilt(band_stop, dataToRead)
 
     # N = len(dataToRead)
     # yf = rfft(dataToRead)
@@ -38,15 +40,15 @@ for i in range(4*43*60):
     # freq = xf[idx]
     # print(freq)
 plt.plot(zeroorone)
-plt.savefig("results/freqs.png")
+plt.savefig(f"{argv[2]}/freqs.png")
 plt.show()
 
 plt.plot(sums)
-plt.savefig("results/mean_rms.png")
+plt.savefig(f"{argv[2]}/mean_rms.png")
 plt.show()
 
 plt.plot(max_ampls)
-plt.savefig("results/rms_ampl.png")
+plt.savefig(f"{argv[2]}/rms_ampl.png")
 plt.show()
 # Uncomment these to see the frequency spectrum as a plot
 # pyplot.plot(xf, np.abs(yf))
