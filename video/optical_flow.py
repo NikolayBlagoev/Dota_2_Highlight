@@ -41,7 +41,7 @@ def optical_flow(video_path: str, vis_path: str = None):
     # Process rest of video
     flow_frames = []
     frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    for frame_idx in trange(1, frame_count, desc="Processing frames", unit=" frames"):
+    for _ in trange(1, frame_count, desc="Computing optical flow", unit=" frames"):
         # Set previous frame
         prev_frame      = frame
         prev_frame_grey = frame_grey
@@ -114,17 +114,21 @@ def flow_intensity(flow_frames: list):
     return intensities, angle_means, angle_stds
 
 
-def plot_intensity(intensities: list[float], title:str, y_label:str, show = False, file_path: str = None):
+def plot_per_frame_values(values: list[float], title:str, y_label:str,
+                          start_frame: int = 1, show = False, file_path: str = None):
     """
-    Plot optical flow intensity over time
+    Plot given values over frames
 
     Args:
-        intensities: List of per-frame intensities as computed by flow_intensity()
+        values: Per frame values to be plotted
+        title: Title to display on plot
+        y_label: Label of y-axis to display on plot
+        start_frame: Number of first frame in the sequence
         show: Display the plot on-screen
         file_path: Path of file to save the plot to
     """
-    frame_counts = np.arange(0, len(intensities))
-    plt.plot(frame_counts, intensities)
+    frame_counts = np.arange(start_frame, len(values) + start_frame)
+    plt.plot(frame_counts, values)
     plt.title(title)
     plt.xlabel("Frame")
     plt.ylabel(y_label)
@@ -146,6 +150,6 @@ if __name__ == "__main__":
     optical_flow_frames = optical_flow(SOURCE_VIDEO)
     intensities, angle_means, angle_stds = flow_intensity(optical_flow_frames)
 
-    plot_intensity(intensities, "Optical Flow Mean Intensity", "Intensity (Mean RMS of flow vectors)", False, GRAPH_FILE)
-    plot_intensity(angle_means, "Optical Flow Angle Mean", "Angle", False, GRAPH_MEANS_FILE)
-    plot_intensity(angle_stds, "Optical Flow Angle Standard Deviation", "Angle", False, GRAPH_STDS_FILE)
+    plot_per_frame_values(intensities, "Optical Flow Mean Intensity", "Intensity (Mean RMS of flow vectors)", show=False, file_path=GRAPH_FILE)
+    plot_per_frame_values(angle_means, "Optical Flow Angle Mean", "Angle", show=False, file_path=GRAPH_MEANS_FILE)
+    plot_per_frame_values(angle_stds, "Optical Flow Angle Standard Deviation", "Angle", show=False, file_path=GRAPH_STDS_FILE)
