@@ -6,7 +6,7 @@ import numpy as np
 
 DATA_DIR                = "data"
 RESULTS_DIR             = "results"
-PROCESSING_FRAME_LENGTH = 256
+PROCESSING_FRAME_LENGTH = 128
 PROCESSING_FRAME_SIZE   = (PROCESSING_FRAME_LENGTH, PROCESSING_FRAME_LENGTH)
 
 def optical_flow(video_path: str, vis_path: str = None):
@@ -49,8 +49,8 @@ def optical_flow(video_path: str, vis_path: str = None):
         # Acquire next frame, resize, and convert to greyscale
         _, frame        = video.read()
         frame           = cv2.resize(frame,
-                                 dsize=PROCESSING_FRAME_SIZE,
-                                 interpolation=cv2.INTER_AREA)
+                                     dsize=PROCESSING_FRAME_SIZE,
+                                     interpolation=cv2.INTER_AREA)
         frame_grey      = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Compute optical flow for frame using Farneback method
@@ -77,7 +77,7 @@ def optical_flow(video_path: str, vis_path: str = None):
     return flow_frames
 
 
-def flow_intensity(flow_frames: list) -> list[float]:
+def flow_intensity(flow_frames: list):
     """
     Compute the mean intensity of a series of flow frames
 
@@ -85,17 +85,36 @@ def flow_intensity(flow_frames: list) -> list[float]:
         flow_frames: A list of optical flow frames
 
     Returns:
-        List where each element is the mean of optical flow vector magnitudes of each input frame
+        intensities: Mean of optical flow vector magnitudes of each input frame
+        angle_means: Mean of optical flow vector angles of each input frame
+        angle_stds: Standard deviation of flow vector angles of each input frame
     """
-    intensities = []
-    for frame in tqdm(flow_frames, desc="Computing frame intensities"):
-        rms             = lambda x1, x2: np.sqrt(np.square(x1) + np.square(x2))
-        frame_intensity = rms(frame[:, :, 0], frame[:, :, 1])
-        intensities.append(np.mean(frame_intensity))
-    return intensities
+    intensities: list[float] = []
+    angle_means: list[float] = []
+    angle_stds: list[float]  = []
+
+    # Compute basic outputs
+    for frame in tqdm(flow_frames, desc="Computing frame statistics"):
+        magnitudes, angles  = cv2.cartToPolar(frame[:, :, 0], frame[:, :, 1], angleInDegrees=True)
+        angle_mean          = np.mean(angles)
+        angle_std           = np.std(angles) 
+        angle_means.append(angle_mean)
+        angle_stds.append(angle_std)
+        intensities.append(np.mean(magnitudes))
+
+    # Zero out the magnitudes of frames where the angle standard deviation is less than
+    # the mean minus one standard deviation of the angle std computed for ALL frames 
+    angle_std_mean  = np.mean(angle_stds)
+    angle_std_std   = np.std(angle_stds)
+    minus_one_std   = angle_std_mean - angle_std_std
+    for frame_idx in trange(len(flow_frames), desc="Pruning outliers"):
+        frame_angle_std         = angle_stds[frame_idx]
+        intensities[frame_idx]  = intensities[frame_idx] if frame_angle_std > minus_one_std else 0
+
+    return intensities, angle_means, angle_stds
 
 
-def plot_intensity(intensities: list[float], show = False, file_path: str = None):
+def plot_intensity(intensities: list[float], title:str, y_label:str, show = False, file_path: str = None):
     """
     Plot optical flow intensity over time
 
@@ -106,9 +125,9 @@ def plot_intensity(intensities: list[float], show = False, file_path: str = None
     """
     frame_counts = np.arange(0, len(intensities))
     plt.plot(frame_counts, intensities)
-    plt.title("Optical Flow Mean Intensity")
+    plt.title(title)
     plt.xlabel("Frame")
-    plt.ylabel("Intensity (Mean RMS of flow vectors)")
+    plt.ylabel(y_label)
 
     if file_path is not None:
         plt.savefig(file_path, bbox_inches="tight")
@@ -118,10 +137,15 @@ def plot_intensity(intensities: list[float], show = False, file_path: str = None
 
 
 if __name__ == "__main__":
-    SOURCE_VIDEO    = path.join(DATA_DIR, "trim.mp4")
-    VIS_FILE        = path.join(RESULTS_DIR, "optical_flow_visualisation.mp4")
-    GRAPH_FILE      = path.join(RESULTS_DIR, "optical_flow_intensity.png")
+    SOURCE_VIDEO        = path.join(DATA_DIR, "trim.mp4")
+    VIS_FILE            = path.join(RESULTS_DIR, "optical_flow_visualisation.mp4")
+    GRAPH_FILE          = path.join(RESULTS_DIR, "optical_flow_intensity.png")
+    GRAPH_MEANS_FILE    = path.join(RESULTS_DIR, "optical_flow_intensity_angle_means.png")
+    GRAPH_STDS_FILE     = path.join(RESULTS_DIR, "optical_flow_intensity_angle_stds.png")
 
     optical_flow_frames = optical_flow(SOURCE_VIDEO)
-    intensities         = flow_intensity(optical_flow_frames)
-    plot_intensity(intensities, True, GRAPH_FILE)
+    intensities, angle_means, angle_stds = flow_intensity(optical_flow_frames)
+
+    plot_intensity(intensities, "Optical Flow Mean Intensity", "Intensity (Mean RMS of flow vectors)", False, GRAPH_FILE)
+    plot_intensity(angle_means, "Optical Flow Angle Mean", "Angle", False, GRAPH_MEANS_FILE)
+    plot_intensity(angle_stds, "Optical Flow Angle Standard Deviation", "Angle", False, GRAPH_STDS_FILE)
