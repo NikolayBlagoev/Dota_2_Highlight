@@ -1,0 +1,34 @@
+* Pre-processing
+This section includes information on pre-processing methods considered.
+** Edge Detector
+Most edge detection algorithms use a sudden change in pixel intensity to detect edges. The following approaches are implemented in OpenCV in python:
+(https://learnopencv.com/edge-detection-using-opencv/)
+
+- Sobel Operator
+   Convolves a function over the image axes to map pixel depth to emphasize great changes and diminish the effect of small changes.
+   The convolution is done through the filtering of a 3x3 kernel matrix over the image performing an operation with the neighboring pixel values over each pixel.
+
+- Canny Detection
+  Blurs the image to reduce noise. Applies the sobel operator. False edges are suppressed comparing to neighbors. A minimum and maximum threshold are used to filter the resulting image to detect only sharp edges and connected weak pixel edges.
+
+
+In the paper with text detection in LoL (https://dl-acm-org.tudelft.idm.oclc.org/doi/pdf/10.1145/2810397.2810398)  the following approaches are used after the sobel operator to obtain only relevant edges:
+
+*** Binarization
+This is a form of thresholding to filter out weak edges.
+
+*** Dilation & Erosion
+Noisy and unconnected edges are filtered out. The bounding edges are filled and the bounding boxes for groups are calculated.
+
+*** Bounding Box
+Small bounding boxes are filtered out.
+
+* OCR
+The LoL paper uses the Tesserract OCR package. I also used this at a hackathon some 4 years ago and at the time used it with a command line call. I'll check if a python package has arrived.
+
+* Post-processing
+** Comparison with text database
+The text prompt used with events is used to filter out specific event related text.
+
+** Using the time window
+The text is displayed for a few seconds and then dissapears. This period is should yield similar text readings and is used to better the end result. The LoL paper uses majority voting.
