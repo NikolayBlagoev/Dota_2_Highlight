@@ -39,6 +39,7 @@ for i in range(4*43*60):
     # idx = np.argmax(np.abs(yf))
     # freq = xf[idx]
     # print(freq)
+np.savetxt('arr.csv', np.asarray(zeroorone), delimiter=',')
 plt.plot(zeroorone)
 plt.savefig(f"{argv[2]}/freqs.png")
 plt.show()
