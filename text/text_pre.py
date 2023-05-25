@@ -2,6 +2,14 @@ import cv2  # openCV
 import numpy as np
 
 
+def crop_image(img, window=[0.2, 0.8, 0, 0.5]):
+    height, width = img.shape[0], img.shape[1]
+    return img[
+        int(height * window[0]) : int(height * window[1]),
+        int(width * window[2]) : int(width * window[3]),
+    ]
+
+
 def prep_image(img, method="Canny"):
     "Call with the img as a string pointing to file."
     readout = cv2.imread(img)
