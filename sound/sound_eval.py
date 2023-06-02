@@ -9,6 +9,7 @@ from sys import argv
 N = 256
 
 a = pydub.AudioSegment.from_mp3(argv[1])
+
 y = np.array(a.get_array_of_samples())
 if a.channels == 2:
     y = y.reshape((-1, 2))
@@ -18,9 +19,10 @@ zeroorone = []
 sums = []
 max_ampls = []
 band_stop = butter(5, [300,3000], 'bandstop', fs=a.frame_rate, output='sos', analog = False)
-for i in range(4*43*60):
+for i in range(6*((y.shape[0]//a.frame_rate) - 1)):
     
-    dataToRead = y[int(i * a.frame_rate/4 ) : int((i + 1) * a.frame_rate/4)]
+    dataToRead = y[int(i * a.frame_rate//6 ) : int((i + 1) * a.frame_rate//6)]
+    # print(len(dataToRead),(y.shape[0]//a.frame_rate),(y.shape[0]/a.frame_rate), a.frame_rate, a.frame_rate//6,i)
     dataToRead = sosfilt(band_stop, dataToRead)
 
     # N = len(dataToRead)
