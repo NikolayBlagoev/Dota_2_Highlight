@@ -48,19 +48,22 @@ def pca_outliar(arr, n):
     loss = np.sum((arr_pca - projected_pca) ** 2, axis=1)
     return loss
 
-def polyreg_outliar_mse(arr, n):
-    arr = arr.reshape((len(arr),))
+def polyreg_outliar_mse(arrs, n):
     windows = []
     labels = []
-    for i in range(len(arr)-n):
-        windows.append(arr[i:i+n])
-        labels.append(arr[i+n])
-    print(np.array(windows).shape)
+    for arr in arrs:
+        arr = np.array(arr).reshape((len(arr),))
+        
+        
+        for i in range(len(arr)-n):
+            windows.append(arr[i:i+n])
+            labels.append(arr[i+n])
+    
     
     linreg = LinearRegression()
     linreg.fit(windows, labels)
-    ret = (linreg.predict(windows)-labels)**2
-    return ret
+    
+    return linreg
 def derivative(signal):
     ret = []
     for i in range(len(signal)-1):
@@ -68,8 +71,10 @@ def derivative(signal):
     return ret
 def isolfor_outliar(arr):
     arr = np.array(arr).reshape(-1, 1)
+    print(arr.shape)
     forr = IsolationForest(contamination=0.0001).fit(arr)
-    return np.abs(forr.score_samples(arr))
+    return forr
+    # return np.abs(forr.score_samples(arr))
 def svm_outliar(arr):
     
     onesvm = OneClassSVM().fit(arr)

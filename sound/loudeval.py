@@ -7,7 +7,7 @@ lodness_over_time = []
 for i in range(int(len(data)/rate)):
     loudness = meter.integrated_loudness(data[int(i * rate ) : int((i + 1) * rate)])
     lodness_over_time.append(loudness)
-
+print(meter.integrated_loudness(data))
 pyplot.plot(lodness_over_time)
 pyplot.savefig("results/loudness_pyloud.png")
 pyplot.show()

@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
 from tqdm import tqdm
-from anomaly_detection import lof
+
 def ewma_f(value, prev_value, alpha):
     return alpha*value + (1-alpha)*prev_value
 
@@ -59,6 +59,6 @@ if __name__ == "__main__":
     axs[0].plot(signal)
     axs[1].plot(ewma(signal, 0.7))
     axs[2].plot(ewma_bias_corrected(signal, 0.7))
-    axs[3].plot(lof(np.array(llr_smooth(signal,50)), 100))
+    # axs[3].plot(lof(np.array(llr_smooth(signal,50)), 100))
     axs[4].plot(power_smooth(signal,10))
     plt.show()
