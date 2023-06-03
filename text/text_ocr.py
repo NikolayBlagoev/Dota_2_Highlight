@@ -10,4 +10,5 @@ def extract_text(img):
 
 if __name__ == "__main__":
     # pre-processing actually hurts the recognition
-    print(extract_text("test_screenshot.png"))
+    print(extract_text("test_screenshot2.png"))
+    # pass

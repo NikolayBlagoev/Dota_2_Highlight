@@ -4,7 +4,7 @@ from sklearn.cluster import AgglomerativeClustering
 import re
 
 
-def text_ocr_filter(ocr_results, img_size=(2560, 1432)):
+def text_ocr_filter(ocr_results):
     important_ocr_results = []
     detection_threshold = 0.4
 
@@ -17,6 +17,12 @@ def text_ocr_filter(ocr_results, img_size=(2560, 1432)):
 
 def _allign_group(candidates, vertical_noise_amplitude_pixels=5):
     """here we group texts which are vertically alligned to form 'phrase' groups"""
+    if len(candidates) < 3:
+        return pd.DataFrame(
+            [[candidate[0][0][1], candidate[1]] for candidate in candidates],
+            columns=["y_top_left", "string"],
+        )
+
     df_candidates = pd.DataFrame(
         [[candidate[0][0][1], candidate[1]] for candidate in candidates],
         columns=["y_top_left", "string"],
@@ -46,7 +52,7 @@ def _allign_group(candidates, vertical_noise_amplitude_pixels=5):
 def _extract_kills(candidate_groups):
     """parsing of alligned phrase groups to obtain kill data"""
     # we are only interested if the group has 4 or 2 members
-    Kill = namedtuple("Kill", ["killer", "killed", "gold_earned", "shared_with"])
+    Kill = namedtuple("Kill", ["peeps", "gold_earned"])
     kills = list(
         candidate_groups[
             candidate_groups.string.str.contains(
@@ -60,7 +66,6 @@ def _extract_kills(candidate_groups):
         if kill[-4:] == "hero":
             nos = list(map(int, re.findall("\d{1,}", kill)))
             peeps = re.findall("\w+\s(\[.*?\])?", kill)
-            print(peeps)
-            extracted_kills.append(Kill(peeps[0], peeps[1], nos[:-1], nos[-1]))
+            extracted_kills.append(Kill(peeps, nos))
 
     return kills

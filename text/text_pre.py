@@ -37,7 +37,6 @@ def _canny(img):
 
 
 if __name__ == "__main__":
-
     test_image = "test_screenshot.png"
     src = prep_image(test_image, method="Canny")
     cv2.imshow("preped test image", src.copy())
