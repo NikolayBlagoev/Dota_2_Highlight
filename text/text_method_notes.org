@@ -20,13 +20,25 @@ This is a form of thresholding to filter out weak edges.
 *** Dilation & Erosion
 Noisy and unconnected edges are filtered out. The bounding edges are filled and the bounding boxes for groups are calculated.
 
-*** Bounding Box
-Small bounding boxes are filtered out.
-
 * OCR
 The LoL paper uses the Tesserract OCR package. I also used this at a hackathon some 4 years ago and at the time used it with a command line call. I'll check if a python package has arrived.
 
+Alternatives include:
+| Name       | Nature                  | Python           | Owner                       |
+|------------+-------------------------+------------------+-----------------------------|
+| EasyOCR    | All purpose             | in pypi          |                             |
+| OCRopus    | Collection of tools     | in pypi          |                             |
+| Tesserract | Mature all-included OCR | via pytesserract | Google (previously HP Labs) |
+| Vision     | All purpose             | through pyObfC   | Apple                       |
+| Ocular     | Print text OCR          | nope, java :/    |                             |
+
+** Choice
+Test out easyOCR and if that doesn't work go for tesserract to save time. If both don't work you probably should take a look at your pre-processing but if you want you can reach for OCRopus for some tools.
+
 * Post-processing
+** Bounding Box
+Small bounding boxes are filtered out. (Note: this was included in the pre-processing before but I guess this is done by the ocr itself so it should come later)
+
 ** Comparison with text database
 The text prompt used with events is used to filter out specific event related text.
 
