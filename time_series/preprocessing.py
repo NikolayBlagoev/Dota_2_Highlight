@@ -10,6 +10,7 @@ def normalize_mean_cov(signal):
 
 def normalize_min_max(signal):
     return (signal - np.min(signal))/(np.max(signal) - np.min(signal))
+
 def ARIMA_noise(signal):
     model = ARIMA(signal, order = (3,1,3))
     res = model.fit()

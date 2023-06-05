@@ -70,7 +70,7 @@ if __name__ == "__main__":
     import numpy as np
 
     kill_count_time_series = video_processing(
-        "C:/Users/derin/Desktop/msc/Dota_2_Highlight/data/videoplayback.mp4",
+        "data/custom_game.mp4",
         1,
         text_main,
     )
