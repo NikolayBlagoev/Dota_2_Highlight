@@ -30,7 +30,7 @@ def ewma_bias_corrected(arr, alpha):
 def linear_smooth(arr, n):
     return np.convolve(arr,[1/n for i in range(n)], 'valid')
 def power_smooth(arr, n):
-    return np.convolve(arr,[2**-abs(i-int(n/2)) for i in range(n)], 'valid')
+    return np.convolve(arr,[2**abs(i-int(n/2)) for i in range(n)], 'valid')
 
 def llr_smooth(arr, n):
     reg = LinearRegression()
