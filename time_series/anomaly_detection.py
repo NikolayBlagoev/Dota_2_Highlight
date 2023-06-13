@@ -14,6 +14,7 @@ from sklearn.ensemble import IsolationForest
 def lof(signal, n):
     lof_model = LocalOutlierFactor(n_neighbors = n)
     lof_model.fit_predict(signal.reshape(-1, 1))
+    # returns the scoring of the LOF
     return np.abs(lof_model.negative_outlier_factor_)
 def ARMA_outliar(signal):
     model = ARIMA(signal, order = (15,2,3), enforce_invertibility = False)
@@ -62,7 +63,7 @@ def polyreg_outliar_mse(arrs, n):
     
     linreg = LinearRegression()
     linreg.fit(windows, labels)
-    
+    # Returns the fitted linear regressor:
     return linreg
 def derivative(signal):
     ret = []

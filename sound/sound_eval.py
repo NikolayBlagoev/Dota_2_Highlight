@@ -7,28 +7,24 @@ import math
 from sys import argv
 
 
-
+# perform sound evaluation
 def eval_sound(y,a, alpha = 0.2):
     zeroorone = []
     sums = []
     max_ampls = []
+    # apply bandstop on audio
     band_stop = butter(5, [300,3000], 'bandstop', fs=a.frame_rate, output='sos', analog = False)
-    # plt.plot(np.fft.fft(y))
-    # plt.show()
+
     for i in range(6*((y.shape[0]//a.frame_rate) - 1)):
         
         dataToRead = y[int(i * a.frame_rate//6 ) : int((i + 1) * a.frame_rate//6)]
         # print(len(dataToRead),(y.shape[0]//a.frame_rate),(y.shape[0]/a.frame_rate), a.frame_rate, a.frame_rate//6,i)
         dataToRead = sosfilt(band_stop, dataToRead)
 
-        # N = len(dataToRead)
-        # yf = rfft(dataToRead)
-        # xf = rfftfreq(N, 1 / a.frame_rate)
         
-        # zf = np.log10(np.abs(yf))
         f, Pxx = periodogram(dataToRead, a.frame_rate)
         A_rms = np.sqrt(Pxx)  
-        
+        # count those above certain threshold
         filter_sum = A_rms[A_rms > 6]
         
             
