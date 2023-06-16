@@ -2,13 +2,14 @@ easyocr
 ipykernel
 matplotlib
 numpy
+opencv_python_headless
 pandas
 pydub
 pyloudnorm
-Requests
 scikit_learn
 scipy
 soundfile
 statsmodels
 tensorflow
+tensorflow_intel
 tqdm

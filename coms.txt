@@ -1,3 +1,2 @@
 ffmpeg -i in.mp4 -ac 1 out.mp3
-
 ffmpeg -i custom_game.mp4 -vf scale=256:256 -r 6 tmp/extr5/image-%3d.png
