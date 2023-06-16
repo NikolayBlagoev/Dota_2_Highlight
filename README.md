@@ -54,6 +54,7 @@ In order to run the evaluation pipeline, you need two files - a `.mp4` file, whi
 - Move the `video.mp4` file into the root directory of the repository;
 - Move the `labels.txt` file into the `data/` directory in the repository;
 - Create the directory `tmp/extr5/` inside the root directory of the repository;
+- Download this [file](https://drive.google.com/file/d/1Ny7QbtnywqRwYU2aFe2qKIyZOk7R-odY/view?usp=sharing) and move it nito the `imagenet-autoencoder/outputs/` directory in the repository;
 - Run the following commands:
 ```
 ffmpeg -i video.mp4 -ac 1 data/audio_mono.mp3
