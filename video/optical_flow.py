@@ -224,5 +224,5 @@ if __name__ == "__main__":
     plot_per_frame_values(angle_means, "Optical Flow Angle Mean", "Angle", show=False, file_path=GRAPH_MEANS_FILE)
     plot_per_frame_values(angle_stds, "Optical Flow Angle Standard Deviation", "Angle", show=False, file_path=GRAPH_STDS_FILE)
 
-    with open(DATA_FILE) as optical_data_file:
+    with open(DATA_FILE, mode='x') as optical_data_file:
         json.dump(intensities)
