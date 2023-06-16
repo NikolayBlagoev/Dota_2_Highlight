@@ -50,7 +50,7 @@ def differences(time_series, compute_average = False):
     return diffs
 
 
-def plot_difference(differences: list, color: str, show = False, file_path: str = None):
+def plot_difference(differences: list, color: str, show = False, file_path: str = None, use_seconds = True):
     """
     Plot given values over frames
 
@@ -60,10 +60,15 @@ def plot_difference(differences: list, color: str, show = False, file_path: str 
         show: Display the plot on-screen
         file_path: Path of file to save the plot to
     """
-    frame_counts = np.arange(1, len(differences) + 1)
-    plt.plot(frame_counts, differences, color=color)
+    time_steps = np.arange(1, len(differences) + 1, dtype=np.uint32)
+    if use_seconds:
+        time_steps  = np.divide(time_steps, int(30))
+        x_label     = "Time (seconds)"
+    else:
+        x_label     = "Frame"
+    plt.plot(time_steps, differences, color=color)
     plt.title(f"Mean color histogram differences ({color})")
-    plt.xlabel("Frame")
+    plt.xlabel(x_label)
     plt.ylabel("Pixel count")
 
     if file_path is not None:
@@ -74,7 +79,7 @@ def plot_difference(differences: list, color: str, show = False, file_path: str 
 
 
 if __name__ == "__main__":
-    SOURCE_VIDEO        = path.join(DATA_DIR, "trim.mp4")
+    SOURCE_VIDEO        = path.join(DATA_DIR, "Topson Sniper Assassin - Dota 2 Pro Gameplay [Watch & Learn].mp4")
     GRAPH_FILE_RED      = path.join(RESULTS_DIR, "color_histogram_differences_red.png")
     GRAPH_FILE_GREEN    = path.join(RESULTS_DIR, "color_histogram_differences_green.png")
     GRAPH_FILE_BLUE     = path.join(RESULTS_DIR, "color_histogram_differences_blue.png")
@@ -83,6 +88,6 @@ if __name__ == "__main__":
     red_differences     = differences(list(map(lambda rgb: rgb[0], histograms)), True)
     green_differences   = differences(list(map(lambda rgb: rgb[1], histograms)), True)
     blue_differences    = differences(list(map(lambda rgb: rgb[2], histograms)), True)
-    plot_difference(red_differences,    'red',   show=False, file_path=GRAPH_FILE_RED)
-    plot_difference(green_differences,  'green', show=False, file_path=GRAPH_FILE_GREEN)
-    plot_difference(blue_differences,   'blue',  show=False, file_path=GRAPH_FILE_BLUE)
+    plot_difference(red_differences,    'red',   show=True, file_path=GRAPH_FILE_RED)
+    plot_difference(green_differences,  'green', show=True, file_path=GRAPH_FILE_GREEN)
+    plot_difference(blue_differences,   'blue',  show=True, file_path=GRAPH_FILE_BLUE)
