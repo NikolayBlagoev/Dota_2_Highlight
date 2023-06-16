@@ -1,0 +1,82 @@
+#+TITLE: Text Extraction Module
+* Structure
+#+BEGIN_EXAMPLE
+.
+|____text_post.py
+|____text_method_notes.org
+|____text_ocr.py
+|____text_pre.py
+|____text_main.py
+|____screenshots
+| |____test_screenshot2.png
+| |____test_screenshot.png
+|____results
+| |____upsampled_kills.csv
+| |____kills.csv
+#+END_EXAMPLE
+
+** text_pre.py
+Contains functions =crop_image= and =prep_image= for external use, defines function =_edge_detection=  , =_sobel= , and =_canny= for internal use.
+
+*** =crop_image=
+Takes arguments:
+| =img=    | image matrix object                                                   |
+| =window= | ordered list: containing top,bottom,left,right margins values -> [0 1] |
+Crops the image to the given window margins proportional to the image size. Returns the image matrix object.
+*** =prep_image=
+Takes arguments:
+| =img=    | image matrix object               |
+| =method= | string: either "Canny" or "Sobel" |
+Converts the image to grayscale, applies Gaussian blur to smooth image and performs edge detection for changing intensities. Returns the processed image matrix object.
+
+** text_ocr.py
+Contains the =extract_text= function which extracts all text from the given image.
+The  =img=  argument takes either the file location or the image matrix object.
+** text_post.py
+Contains the =text_ocr_filter=  function for external use. Defines the =_allign_group= , =_extract_kills=  functions for internal use.
+
+** =text_ocr_filter=
+Takes arguments:
+| =ocr_results= | list of lists containing the bounding boxes, text and strength of detection |
+Filters out the weak results and clusters the rest to find sentences, filters these sentences based on generic kill text prompt and returns kill text sentences.
+** =_allign_group=
+Takes arguments:
+| =candidates=                      | list of lists containing the bounding boxes, text and strength of detection     |
+| =vertical_noise_amplitude_pixels= | integer: number of pixel height mismatch for text considered on the same level. |
+Alligns candidates around the same height and concatenates them. Returns list of combined sentences.
+
+** =_extract_kills=
+Takes arguments:
+| =candidate_groups= | list of phrases |
+Searches for a pattern in each phrase and stores the names of people involved and gold earned in a /Kill/ namedtuple object. Returns a list of /Kill/ namedtuple objects.
+
+** text_main.py
+This is the file containing the final combined extraction commands =text_main= and =video_processing=.
+*** =text_main=
+Takes arguments:
+| =img= | image matrix object |
+Processes the image matrix object through the pipeline. Returns the length of the list of extracted kill texts for the frame provided.
+*** =video_processing=
+Takes arguments:
+| =video=       | string: video file location         |
+| =sample_rate= | integer: sample frequency in Hz     |
+| =func=        | function: frame processing function |
+
+Written to be as generic and re-usable as possible the function takes a video file, subsamples it at the sample rate provided and processes each frame with the given function. Returns a time series list of results of the function given.
+
+* Usage
+Import =text_main=  and =video_processing=  from =text_main.py= . Run the =video_processing= function and pass in the video file location, the desired sample rate and the processing function (write your own or use =text_main=). The function will return you a time series of kill text if =text_main= is passed. Optionally use the numpy function  =savetxt= to save your results for future reference or use.
+
+* Dependencies
+*tested on python version 3.10.9*
+pandas
+scikit-learn
+numpy
+tqdm
+easyocr
+
+*built in:*
+re
+collections
+traceback
+logging
