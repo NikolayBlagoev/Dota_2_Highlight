@@ -2,6 +2,7 @@
 !**/data/.gitkeep
 **/results/*
 !**/results/.gitkeep
+/tmp/extr5/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,5 +1,5 @@
 # Video Features
-Contains functionality for extract temporal video-based features
+Contains functionality for extracting temporal video-based features
 
 ## Directory Structure
 - `color_histogram.py`: Functionality for computing inter-frame color histogram (distribution) differences
