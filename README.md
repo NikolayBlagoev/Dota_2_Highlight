@@ -8,7 +8,9 @@ The time series folder contains time series related functions.
 
 smoothening_functions.py contains functions which smooth the signal. Of interest are the Kaiser Window smoothening and the linear smoothening.
 
-anomaly_detection.py contains functions for anomaly detection. Of interest are the LOF polyreg_outliar_mse
+anomaly_detection.py contains functions for anomaly detection. Of interest are the LOF (local outliaer factor) and lo
+
+polyreg_outliar_mse, which returns a trained linear autoregressive to be used with minimum squared error for predictions.
 
 
 ### Sound
