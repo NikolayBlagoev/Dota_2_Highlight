@@ -10,13 +10,10 @@
 |____screenshots
 | |____test_screenshot2.png
 | |____test_screenshot.png
-|____results
-| |____upsampled_kills.csv
-| |____kills.csv
 #+END_EXAMPLE
 
 ** text_pre.py
-Contains functions =crop_image= and =prep_image= for external use, defines function =_edge_detection=  , =_sobel= , and =_canny= for internal use.
+Contains functions =crop_image= and =prep_image= for external use, defines function =_edge_detection=  , =_sobel= , and =_canny= for internal use. The canny method threshold values and sobel method derivative directions can be adjusted in their respective internal functions.
 
 *** =crop_image=
 Takes arguments:
@@ -44,6 +41,7 @@ Takes arguments:
 | =candidates=                      | list of lists containing the bounding boxes, text and strength of detection     |
 | =vertical_noise_amplitude_pixels= | integer: number of pixel height mismatch for text considered on the same level. |
 Alligns candidates around the same height and concatenates them. Returns list of combined sentences.
+The threshold for successful OCR detection has been set to 0.4, this can be adjusted if the ocr varying results to filter out poor candidates.
 
 ** =_extract_kills=
 Takes arguments:
