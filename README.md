@@ -59,10 +59,11 @@ In order to run the evaluation pipeline, you need two files - a `.mp4` file, whi
 ```
 ffmpeg -i video.mp4 -ac 1 data/audio_mono.mp3
 ffmpeg -i video.mp4 -vf scale=256:256 -r 6 tmp/extr5/image-%3d.png
-python imagenet-autoencoder/tools/generate_list.py --name highlights --path tmp
-python imagenet-autoencoder/train.py --arch resnet50 --train_list list/highlights_list.txt --batch-size 6 --workers 1 --start-epoch 10 --epochs 11 --pth-save-fold outputs 
-python imagenet-autoencoder/run_autoencoder.py
-mv imagenet-autoencoder/arr.csv data/frame_analysis.csv
+cd imagenet-autoencoder
+python tools/generate_list.py --name highlights --path ../tmp
+python train.py --arch resnet50 --train_list list/highlights_list.txt --batch-size 6 --workers 1 --start-epoch 10 --epochs 11 --pth-save-fold outputs
+python run_autoencoder.py
+mv arr.csv ../data/frame_analysis.csv
 ```
 - In the `Data Loading` section of the `get_anomalies.ipynb` notebook set the variable `audio_file` to `"audio_mono"`;
 - In the `Data Loading` section of the `get_anomalies.ipynb` notebook set the variable `frame_analysis_file` to `"frame_analysis"`;
